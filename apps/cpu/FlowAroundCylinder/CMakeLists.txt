@@ -23,57 +23,13 @@
 #  FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
 #  for more details.
 #
+#  You should have received a copy of the GNU General Public License along
+#  with VirtualFluids (see COPYING.txt). If not, see <http://www.gnu.org/licenses/>.
+#
 #  SPDX-License-Identifier: GPL-3.0-or-later
 #  SPDX-FileCopyrightText: Copyright © VirtualFluids Project contributors, see AUTHORS.md in root folder
 #
 #=======================================================================================
-[build-system]
-requires = ["scikit-build-core"]
-build-backend = "scikit_build_core.build"
+PROJECT(FlowAroundCylinder)
 
-[project]
-name = "pyfluids"
-version = "0.2.1"
-description = "Python bindings for VirtualFluids"
-readme = "README.md"
-requires-python = ">=3.6"
-classifiers = [
-  "Programming Language :: Python :: 3 :: Only",
-  "Programming Language :: Python :: 3.6",
-  "Programming Language :: Python :: 3.7",
-  "Programming Language :: Python :: 3.8",
-  "Programming Language :: Python :: 3.9",
-  "Programming Language :: Python :: 3.10",
-  "Programming Language :: Python :: 3.11",
-]
-
-[project.urls]
-url = "https://git.rz.tu-bs.de/irmb/virtualfluids"
-
-[tool.scikit-build]
-build-dir = "build"
-strict-config = true
-logging.level = "INFO"
-build.tool-args = ["-j12"]
-build.targets = ["python_bindings"]
-
-[tool.scikit-build.wheel]
-packages = ["pythonbindings/pyfluids", "pythonbindings/pyfluids-stubs", "pythonbindings/pymuparser"]
-license-files = ["COPYING.txt", "LICENSES/*"]
-
-[tool.scikit_build.cmake]
-verbose = true
-build-type = "Release"
-
-[tool.scikit-build.cmake.define]
-VF_ENABLE_PYTHON_BINDINGS = "ON"
-
-[[tool.scikit-build.overrides]]
-if.platform-system = "^linux"
-inherit.cmake.args = "append"
-cmake.args = ["-G=Unix Makefiles"]
-
-
-[tool.mypy]
-plugins = "numpy.typing.mypy_plugin"
-
+vf_add_executable(PRIVATE_LINK cpu_core)

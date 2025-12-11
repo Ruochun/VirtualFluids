@@ -26,35 +26,34 @@
 //  SPDX-License-Identifier: GPL-3.0-or-later
 //  SPDX-FileCopyrightText: Copyright © VirtualFluids Project contributors, see AUTHORS.md in root folder
 //
-//! \addtogroup gpu_Communication Communication
-//! \ingroup gpu_core core
+//! \addtogroup cpu_BoundaryConditions BoundaryConditions
+//! \ingroup cpu_core core
 //! \{
-//! \author Martin Schoenherr
-//======================================================================================
+//! \author Konstantin Kutscher
+//=======================================================================================
 
-#ifndef EXCHANGEDATA27_DEVICE_CUH
-#define EXCHANGEDATA27_DEVICE_CUH
+#ifndef NoSlipInterpolatedRelaxed_h__
+#define NoSlipInterpolatedRelaxed_h__
 
-#include <cuda.h>
-#include <cuda_runtime.h>
+#include "BCStrategy.h"
+#include <PointerDefinitions.h>
 
-#include <basics/DataTypes.h>
+class DistributionArray3D;
 
-void GetSendFsPreDev27(real* DD, real* bufferFs, real* populationsAD, real* bufferAD, const uint* sendIndex, uint buffmax, const uint* neighborX,
-                       const uint* neighborY, const uint* neighborZ, unsigned long long numberOfLBnodes,
-                       bool isEvenTimestep, bool diffOn, uint numberOfThreads, cudaStream_t stream = CU_STREAM_LEGACY);
+//! A class implements no-slip boundary condition
+class NoSlipInterpolatedRelaxed : public BCStrategy
+{
+public:
+    NoSlipInterpolatedRelaxed();
+    SPtr<BCStrategy> clone() override;
+    void addDistributions(SPtr<DistributionArray3D> distributions) override;
+    void applyBC() override;
+    void thirdMomentsOn();
+    void thirdMomentsOff();
 
-void GetSendFsPostDev27(real* DD, real* bufferFs, real* populationsAD, real* bufferAD, const uint* sendIndex, uint buffmax, const uint* neighborX,
-                        const uint* neighborY, const uint* neighborZ, unsigned long long numberOfLBnodes,
-                        bool isEvenTimestep, bool diffOn, uint numberOfThreads, cudaStream_t stream = CU_STREAM_LEGACY);
-
-void SetRecvFsPreDev27(real* DD, real* bufferFs, real* populationsAD, real* bufferAD, const uint* recvIndex, uint buffmax, const uint* neighborX,
-                       const uint* neighborY, const uint* neighborZ, unsigned long long numberOfLBnodes,
-                       bool isEvenTimestep, bool diffOn, uint numberOfThreads, cudaStream_t stream = CU_STREAM_LEGACY);
-
-void SetRecvFsPostDev27(real* DD, real* bufferFs, real* populationsAD, real* bufferAD, const uint* recvIndex, uint buffmax, const uint* neighborX,
-                        const uint* neighborY, const uint* neighborZ, unsigned long long numberOfLBnodes,
-                        bool isEvenTimestep, bool diffOn, uint numberOfThreads, cudaStream_t stream = CU_STREAM_LEGACY);
+private:
+    real thirdMomentsFactor{1.0};
+};
 #endif
 
 //! \}
