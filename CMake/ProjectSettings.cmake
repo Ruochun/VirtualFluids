@@ -147,6 +147,14 @@ if(VF_ENABLE_GPU)
 
     set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS} --extended-lambda --expt-relaxed-constexpr")
 
+    # Disable LTO for CUDA host code compilation.
+    # When GCC link-time optimization (LTO) is active, it merges multiple CUDA translation
+    # units during linking, causing duplicate 'fatbinData' assembler symbol errors and
+    # '-Wlto-type-mismatch' warnings for 'hostRefKernelArrayInternalLinkage'.
+    if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID MATCHES ".*Clang")
+        set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS} -Xcompiler=-fno-lto")
+    endif()
+
     message(STATUS "CMAKE_CUDA_FLAGS: ${CMAKE_CUDA_FLAGS}")
     message(STATUS "CUDA Architecture: ${CMAKE_CUDA_ARCHITECTURES}")
     set(CMAKE_CUDA_ARCHITECTURES
